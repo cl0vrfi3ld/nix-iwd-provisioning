@@ -28,38 +28,38 @@ in
             };
             phase1Identity = {
               type = types.str;
-              default = "";
+              # default = "";
               example = "eduroamIDENTITY";
             };
             username = mkOption {
               type = types.str;
-              default = "";
+              # default = "";
               example = "cnolan123";
             };
             serverDomainMask = mkOption {
               type = types.str;
-              default = "";
+              default = "radius";
               example = "radius.node";
             };
             domain = mkOption {
               type = types.str;
-              default = "";
+              # default = "";
               example = "university.edu";
             };
             password = mkOption {
               type = types.str;
-              default = "";
+              # default = "";
               example = "password123";
             };
             passwordHash = mkOption {
               type = types.str;
-              default = "";
+              # default = "";
               example = "password123";
               description = "Preferred over `eduroam.password`. The hash can be generated via `printf '%s' 'REPLACE_WITH_YOUR_PASSWORD' | iconv -t utf16le | openssl md4 -provider legacy | cut -d' ' -f2`";
             };
             caCert = mkOption {
               type = types.path;
-              default = "";
+              # default = "";
               example = "/var/lib/iwd/ca.pem";
               description = "(optional) path to your school's eduroam CA certificate";
             };
@@ -75,8 +75,8 @@ in
       }
       (
         let
-          edu = config.networking.wireless.iwd.provisioning.eduroam;
-          p1ID = edu.phase1Identity;
+          edu = config.networking.wireless.iwd.provisioning.edu;
+          p1ID = edu.phase1Identity.value;
           domain = edu.domain;
           caCert = edu.caCert;
           domainMask = edu.serverDomainMask;
@@ -87,13 +87,13 @@ in
           eduroamProvisioningFile = pkgs.writeText "${eduroamFile}" ''
             [Security]
             EAP-Method=PEAP
-            ${lib.optionalString (p1ID != "") "EAP-Identity=${builtins.toString edu.phase1Identity}@${domain}"}
-            ${lib.optionalString (caCert != "") "EAP-PEAP-CACert=${caCert}"}
-            ${lib.optionalString (domainMask != "") "EAP-PEAP-ServerDomainMask=${domainMask}.${domain}"}
+            ${lib.optionalString (p1ID != null) "EAP-Identity=${p1ID}@${domain}"}
+            ${lib.optionalString (caCert != null) "EAP-PEAP-CACert=${caCert}"}
+            ${lib.optionalString (domainMask != null) "EAP-PEAP-ServerDomainMask=${domainMask}.${domain}"}
             EAP-PEAP-Phase2-Method=MSCHAPV2
             EAP-PEAP-Phase2-Identity=${uname}@${edu.domain}
-            ${lib.optionalString (psswd != "") "EAP-PEAP-Phase2-Password=${psswd}"}
-            ${lib.optionalString (hash != "") "EAP-PEAP-Phase2-Password-Hash=${hash}"}
+            ${lib.optionalString (psswd != null) "EAP-PEAP-Phase2-Password=${psswd}"}
+            ${lib.optionalString (hash != null) "EAP-PEAP-Phase2-Password-Hash=${hash}"}
 
             [Settings]
             Autoconnect=true
