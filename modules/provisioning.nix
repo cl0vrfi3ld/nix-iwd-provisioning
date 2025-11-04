@@ -72,13 +72,13 @@ in
             eduroamProvisioningFile = pkgs.writeText "${eduroamFile}" ''
               [Security]
               EAP-Method=PEAP
-              ${lib.mkIf edu.phase1Identity "EAP-Identity=${edu.phase1Identity}@${edu.domain}"}
-              ${lib.mkIf edu.caCert "EAP-PEAP-CACert=${edu.caCert}"}
-              ${lib.mkIf edu.caCert "EAP-PEAP-ServerDomainMask=${edu.serverDomainMask}.${edu.domain}"}
+              ${lib.optionalString (edu.phase1Identity != null) "EAP-Identity=${edu.phase1Identity}@${edu.domain}"}
+              ${lib.optionalString (edu.caCert != null) "EAP-PEAP-CACert=${edu.caCert}"}
+              ${lib.optionalString (edu.serverDomainMask != null) "EAP-PEAP-ServerDomainMask=${edu.serverDomainMask}.${edu.domain}"}
               EAP-PEAP-Phase2-Method=MSCHAPV2
               EAP-PEAP-Phase2-Identity=${edu.username}@${edu.domain}
-              ${lib.mkIf edu.password "EAP-PEAP-Phase2-Password=${edu.password}"}
-              ${lib.mkIf edu.passwordHash "EAP-PEAP-Phase2-Password-Hash=${edu.passwordHash}"}
+              ${lib.optionalString (edu.password != null) "EAP-PEAP-Phase2-Password=${edu.password}"}
+              ${lib.optionalString (edu.passwordHash!= null) "EAP-PEAP-Phase2-Password-Hash=${edu.passwordHash}"}
 
               [Settings]
               Autoconnect=true
