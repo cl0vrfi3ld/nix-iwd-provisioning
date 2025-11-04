@@ -9,13 +9,13 @@
 with lib;
 
 let
-  cfg = config.networking.wireless.iwd.provisioning;
+  cfg = config.iwd-provisioning;
   iwdConfigDir = "/var/lib/iwd";
   eduroamFile = "eduroam.8021x";
 
 in
 {
-  options.networking.wireless.iwd.provisioning = {
+  options.iwd-provisioning = {
     enable = mkEnableOption "provision iwd files via nix";
 
     eduroam = mkOption {
@@ -75,7 +75,7 @@ in
       }
       (
         let
-          edu = config.networking.wireless.iwd.provisioning.eduroam;
+          edu = config.iwd-provisioning.eduroam;
           p1ID = edu.phase1Identity.value;
           domain = edu.domain;
           caCert = edu.caCert;
@@ -84,7 +84,7 @@ in
           psswd = edu.password;
           hash = edu.passwordHash;
           # TODO: embed cacert in cfg file
-          eduroamProvisioningFile = pkgs.writeText "${eduroamFile}" ''
+          eduroamProvisioningFile = pkgs.writeText eduroamFile ''
             [Security]
             EAP-Method=PEAP
             ${lib.optionalString (p1ID != null) "EAP-Identity=${p1ID}@${domain}"}
