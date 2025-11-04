@@ -26,46 +26,44 @@ in
     # };
 
     eduroam = mkOption {
-      type = types.attrsOf (
-        types.submodule {
-          options = {
-            enable = mkOption {
-              type = types.bool;
-              default = false;
-            };
-            phase1Identity = {
-              type = types.str;
-              example = "eduroamIDENTITY";
-            };
-            username = mkOption {
-              type = types.str;
-              example = "cnolan123";
-            };
-            serverDomainMask = mkOption {
-              type = types.str;
-              example = "radius.node";
-            };
-            domain = mkOption {
-              type = types.str;
-              example = "university.edu";
-            };
-            password = mkOption {
-              type = types.str;
-              example = "password123";
-            };
-            passwordHash = mkOption {
-              type = types.str;
-              example = "password123";
-              description = "Preferred over `eduroam.password`. The hash can be generated via `printf '%s' 'REPLACE_WITH_YOUR_PASSWORD' | iconv -t utf16le | openssl md4 -provider legacy | cut -d' ' -f2`";
-            };
-            caCert = mkOption {
-              type = types.path;
-              example = "/var/lib/iwd/ca.pem";
-              description = "(optional) path to your school's eduroam CA certificate";
-            };
+      type = types.submodule {
+        options = {
+          enable = mkOption {
+            type = types.bool;
+            default = false;
           };
-        }
-      );
+          phase1Identity = {
+            type = types.str;
+            example = "eduroamIDENTITY";
+          };
+          username = mkOption {
+            type = types.str;
+            example = "cnolan123";
+          };
+          serverDomainMask = mkOption {
+            type = types.str;
+            example = "radius.node";
+          };
+          domain = mkOption {
+            type = types.str;
+            example = "university.edu";
+          };
+          password = mkOption {
+            type = types.str;
+            example = "password123";
+          };
+          passwordHash = mkOption {
+            type = types.str;
+            example = "password123";
+            description = "Preferred over `eduroam.password`. The hash can be generated via `printf '%s' 'REPLACE_WITH_YOUR_PASSWORD' | iconv -t utf16le | openssl md4 -provider legacy | cut -d' ' -f2`";
+          };
+          caCert = mkOption {
+            type = types.path;
+            example = "/var/lib/iwd/ca.pem";
+            description = "(optional) path to your school's eduroam CA certificate";
+          };
+        };
+      };
     };
 
     # extraConfig = mkOption {
