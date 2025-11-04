@@ -80,7 +80,7 @@ in
           eduroamProvisioningFile = pkgs.writeText "${eduroamFile}" ''
             [Security]
             EAP-Method=PEAP
-            ${lib.optionalString (p1ID != null) "EAP-Identity={p1ID}@{domain}"}
+            ${lib.optionalString (p1ID != null) "EAP-Identity=${p1ID}@{domain}"}
             ${lib.optionalString (caCert != null) "EAP-PEAP-CACert=${caCert}"}
             ${lib.optionalString (domainMask != null) "EAP-PEAP-ServerDomainMask=${domainMask}.${domain}"}
             EAP-PEAP-Phase2-Method=MSCHAPV2
