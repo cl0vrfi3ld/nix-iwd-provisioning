@@ -19,7 +19,7 @@ in
     enable = mkEnableOption "provision iwd files via nix";
 
     eduroam = mkOption {
-      type = types.attrsOf (
+      type = 
         types.submodule {
           options = {
             enable = mkOption {
@@ -58,7 +58,7 @@ in
             };
           };
         }
-      );
+      ;
     };
   };
   config =
