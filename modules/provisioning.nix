@@ -68,7 +68,7 @@ in
       }
       (
         let
-          edu = cfg.eduroam.options;
+          edu = cfg.eduroam;
           p1ID = edu.phase1Identity;
           domain = domain;
           caCert = edu.caCert;
