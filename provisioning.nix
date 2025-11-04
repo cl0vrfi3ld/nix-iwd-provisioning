@@ -60,7 +60,7 @@ in
             };
             caCert = mkOption {
               type = types.path;
-              example = "university.edu";
+              example = "/var/lib/iwd/ca.pem";
               description = "(optional) path to your school's eduroam CA certificate";
             };
           };
