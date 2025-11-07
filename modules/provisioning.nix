@@ -21,8 +21,8 @@ in
 
       eduroam = mkOption {
         type = types.submodule {
-          default = { };
-          description = "settings for eduroam";
+          # default = { };
+          # description = "settings for eduroam";
           options = {
             enable = mkOption {
               type = types.bool;
