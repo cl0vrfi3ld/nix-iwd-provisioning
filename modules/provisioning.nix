@@ -11,7 +11,6 @@ with lib;
 let
   cfg = config.iwd-provisioning;
   iwdConfigDir = "/var/lib/iwd";
-  eduroamFile = "eduroam.8021x";
 
 in
 {
@@ -82,23 +81,32 @@ in
           # psswd = edu.password;
           # hash = edu.passwordHash;
           # TODO: embed cacert in cfg file
-          eduroamProvisioningFile = pkgs.writeText eduroamFile ''
+          eduroamFileName = "eduroam.8021x";
+          eduroamProvisioningFile = pkgs.writeText eduroamFileName ''
             [Security]
             EAP-Method=PEAP
-            ${lib.optionalString (edu.phase1Identity != null) "EAP-Identity=${edu.phase1Identity}@${edu.domain}"}
+            ${lib.optionalString (
+              edu.phase1Identity != null
+            ) "EAP-Identity=${edu.phase1Identity}@${edu.domain}"}
             ${lib.optionalString (edu.caCert != null) "EAP-PEAP-CACert=${edu.caCert}"}
-            ${lib.optionalString (edu.serverDomainMask != null) "EAP-PEAP-ServerDomainMask=${edu.serverDomainMask}.${edu.domain}"}
+            ${lib.optionalString (
+              edu.serverDomainMask != null
+            ) "EAP-PEAP-ServerDomainMask=${edu.serverDomainMask}.${edu.domain}"}
             EAP-PEAP-Phase2-Method=MSCHAPV2
             EAP-PEAP-Phase2-Identity=${edu.username}@${edu.domain}
             ${lib.optionalString (!builtins.isNull edu.password) "EAP-PEAP-Phase2-Password=${edu.password}"}
-            ${lib.optionalString (!builtins.isNull edu.passwordHash) "EAP-PEAP-Phase2-Password-Hash=${edu.passwordHash}"}
+            ${lib.optionalString (
+              !builtins.isNull edu.passwordHash
+            ) "EAP-PEAP-Phase2-Password-Hash=${edu.passwordHash}"}
 
             [Settings]
             Autoconnect=true
           '';
         in
         mkIf edu.enable {
-          assertions = [ {assertion = (!builtins.isNull edu.password) || (!builtins.isNull edu.passwordHash);} ];
+          assertions = [
+            { assertion = (!builtins.isNull edu.password) || (!builtins.isNull edu.passwordHash); }
+          ];
           systemd.services.iwd-provisioning_eduroam = {
             description = "Ensure the presence of eduroam provisioning files before iwd starts up";
             # Dependencies: run before iwd, and require it
@@ -111,7 +119,7 @@ in
               ExecStart = ''
                 /run/current-system/sw/bin/bash -c ' \
                   mkdir -p ${iwdConfigDir} && \
-                  cp ${eduroamProvisioningFile} ${iwdConfigDir} \
+                  ln -s ${eduroamProvisioningFile} ${iwdConfigDir}/${eduroamFileName} \
                 '
               '';
 
