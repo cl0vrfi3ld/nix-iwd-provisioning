@@ -56,13 +56,14 @@ in
     };
     config =
       let
-        p1ID = cfg.phase1Identity;
-        domain = cfg.domain;
-        caCert = cfg.caCert;
-        domainMask = cfg.serverDomainMask;
-        uname = cfg.username;
-        psswd = cfg.password;
-        hash = cfg.passwordHash;
+        edu = config.iwd-eduroam;
+        p1ID = edu.phase1Identity;
+        domain = edu.domain;
+        caCert = edu.caCert;
+        domainMask = edu.serverDomainMask;
+        uname = edu.username;
+        psswd = edu.password;
+        hash = edu.passwordHash;
         # TODO: embed cacert in cfg file
         eduroamFile = "eduroam.8021x";
         eduroamProvisioningFile = pkgs.writeText eduroamFile ''
@@ -80,7 +81,7 @@ in
           Autoconnect=true
         '';
       in
-      mkIf cfg.enable {
+      mkIf edu.enable {
         systemd.services.iwd-provisioning_eduroam = {
           description = "Ensure the presence of eduroam provisioning files before iwd starts up";
           # Dependencies: run before iwd, and require it
