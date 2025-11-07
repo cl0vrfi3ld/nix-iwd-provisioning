@@ -25,7 +25,7 @@ in
           options = {
             enable = mkEnableOption "enable eduroam provisioning";
             phase1Identity = mkOption {
-              type = types.str;
+              type = types.nullOr types.str;
               # default = "";
               example = "eduroamIDENTITY";
             };
@@ -45,18 +45,18 @@ in
               example = "university.edu";
             };
             password = mkOption {
-              type = types.str;
+              type = types.nullOr types.str;
               # default = "";
               example = "password123";
             };
             passwordHash = mkOption {
-              type = types.str;
+              type = types.nullOr types.str;
               # default = "";
               example = "password123";
               description = "Preferred over `eduroam.password`. The hash can be generated via `printf '%s' 'REPLACE_WITH_YOUR_PASSWORD' | iconv -t utf16le | openssl md4 -provider legacy | cut -d' ' -f2`";
             };
             caCert = mkOption {
-              type = types.path;
+              type = types.nullOr types.path;
               # default = "";
               example = "/var/lib/iwd/ca.pem";
               description = "(optional) path to your school's eduroam CA certificate";
