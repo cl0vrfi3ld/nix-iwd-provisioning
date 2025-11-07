@@ -21,7 +21,7 @@ in
 
       eduroam = mkOption {
         type = types.submodule {
-          default = { };
+
           description = "settings for eduroam";
           options = {
             enable = mkEnableOption "enable eduroam provisioning";
