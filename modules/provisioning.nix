@@ -24,11 +24,8 @@ in
           default = { };
           description = "settings for eduroam";
           options = {
-            enable = mkOption {
-              type = types.bool;
-              default = false;
-            };
-            phase1Identity = {
+            enable = mkEnableOption "enable eduroam provisioning";
+            phase1Identity = mkOption {
               type = types.str;
               # default = "";
               example = "eduroamIDENTITY";
