@@ -54,50 +54,56 @@ in
         description = "(optional) path to your school's eduroam CA certificate";
       };
     };
-    config =
-      let
-        p1ID = cfg.phase1Identity;
-        domain = cfg.domain;
-        caCert = cfg.caCert;
-        domainMask = cfg.serverDomainMask;
-        uname = cfg.username;
-        psswd = cfg.password;
-        hash = cfg.passwordHash;
-        # TODO: embed cacert in cfg file
-        eduroamFile = "eduroam.8021x";
-        eduroamProvisioningFile = pkgs.writeText eduroamFile ''
-          [Security]
-          EAP-Method=PEAP
-          ${lib.optionalString (p1ID != null) "EAP-Identity=${p1ID}@${domain}"}
-          ${lib.optionalString (caCert != null) "EAP-PEAP-CACert=${caCert}"}
-          ${lib.optionalString (domainMask != null) "EAP-PEAP-ServerDomainMask=${domainMask}.${domain}"}
-          EAP-PEAP-Phase2-Method=MSCHAPV2
-          EAP-PEAP-Phase2-Identity=${uname}@${edu.domain}
-          ${lib.optionalString (psswd != null) "EAP-PEAP-Phase2-Password=${psswd}"}
-          ${lib.optionalString (hash != null) "EAP-PEAP-Phase2-Password-Hash=${hash}"}
+    config = (
+      mkMerge [
+        { }
+        (
+          let
+            p1ID = cfg.phase1Identity;
+            domain = cfg.domain;
+            caCert = cfg.caCert;
+            domainMask = cfg.serverDomainMask;
+            uname = cfg.username;
+            psswd = cfg.password;
+            hash = cfg.passwordHash;
+            # TODO: embed cacert in cfg file
+            eduroamFile = "eduroam.8021x";
+            eduroamProvisioningFile = pkgs.writeText eduroamFile ''
+              [Security]
+              EAP-Method=PEAP
+              ${lib.optionalString (p1ID != null) "EAP-Identity=${p1ID}@${domain}"}
+              ${lib.optionalString (caCert != null) "EAP-PEAP-CACert=${caCert}"}
+              ${lib.optionalString (domainMask != null) "EAP-PEAP-ServerDomainMask=${domainMask}.${domain}"}
+              EAP-PEAP-Phase2-Method=MSCHAPV2
+              EAP-PEAP-Phase2-Identity=${uname}@${edu.domain}
+              ${lib.optionalString (psswd != null) "EAP-PEAP-Phase2-Password=${psswd}"}
+              ${lib.optionalString (hash != null) "EAP-PEAP-Phase2-Password-Hash=${hash}"}
 
-          [Settings]
-          Autoconnect=true
-        '';
-      in
-      mkIf cfg.enable {
-        systemd.services.iwd-provisioning_eduroam = {
-          description = "Ensure the presence of eduroam provisioning files before iwd starts up";
-          # Dependencies: run before iwd, and require it
-          # before = [ "iwd.service" ];
-          # wantedBy = [ "iwd.service" ];
-          # the service
-          serviceConfig = {
-            Type = "oneshot";
-            RemainAfterExit = true;
-            ExecStart = ''
-              /run/current-system/sw/bin/bash -c ' \
-                mkdir -p ${iwdConfigDir} && \
-                cp ${eduroamProvisioningFile} ${iwdConfigDir}
+              [Settings]
+              Autoconnect=true
             '';
+          in
+          mkIf cfg.enable {
+            systemd.services.iwd-provisioning_eduroam = {
+              description = "Ensure the presence of eduroam provisioning files before iwd starts up";
+              # Dependencies: run before iwd, and require it
+              # before = [ "iwd.service" ];
+              # wantedBy = [ "iwd.service" ];
+              # the service
+              serviceConfig = {
+                Type = "oneshot";
+                RemainAfterExit = true;
+                ExecStart = ''
+                  /run/current-system/sw/bin/bash -c ' \
+                    mkdir -p ${iwdConfigDir} && \
+                    cp ${eduroamProvisioningFile} ${iwdConfigDir}
+                '';
 
-          };
-        };
-      };
+              };
+            };
+          }
+        )
+      ]
+    );
   };
 }
