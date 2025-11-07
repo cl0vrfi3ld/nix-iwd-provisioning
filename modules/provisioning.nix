@@ -122,7 +122,7 @@ in
               ExecStart = ''
                 /run/current-system/sw/bin/bash -c ' \
                   mkdir -p ${iwdConfigDir} && \
-                  ln -s ${eduroamProvisioningFile} ${iwdConfigDir}/${eduroamFileName} \
+                  ln -sf ${eduroamProvisioningFile} ${iwdConfigDir}/${eduroamFileName} \
                 '
               '';
 
