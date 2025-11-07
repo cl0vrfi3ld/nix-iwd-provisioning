@@ -71,7 +71,7 @@ in
       {
         assertions = [
           {
-            assertion = networking.wireless.iwd.enable == true;
+            assertion = config.networking.wireless.iwd.enable == true;
             message = "iwd must be enabled before config files can be provisioned";
           }
         ];
