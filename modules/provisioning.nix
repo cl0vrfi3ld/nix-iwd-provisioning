@@ -15,12 +15,14 @@ let
 
 in
 {
-  options.iwd-provisioning = {
-    enable = mkEnableOption "provision iwd files via nix";
+  options = {
+    iwd-provisioning = {
+      enable = mkEnableOption "provision iwd files via nix";
 
-    eduroam = mkOption {
-      type = 
-        types.submodule {
+      eduroam = mkOption {
+        type = types.submodule {
+          default = { };
+          description = "settings for eduroam";
           options = {
             enable = mkOption {
               type = types.bool;
@@ -64,8 +66,8 @@ in
               description = "(optional) path to your school's eduroam CA certificate";
             };
           };
-        }
-      ;
+        };
+      };
     };
   };
   config =
