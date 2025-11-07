@@ -73,13 +73,7 @@ in
       (
         let
           edu = config.iwd-provisioning.eduroam;
-          # p1ID = edu.phase1Identity;
-          # domain = edu.domain;
-          # caCert = edu.caCert;
-          # domainMask = edu.serverDomainMask;
-          # uname = edu.username;
-          # psswd = edu.password;
-          # hash = edu.passwordHash;
+
           # TODO: embed cacert in cfg file
           eduroamFileName = "eduroam.8021x";
           eduroamProvisioningFile = pkgs.writeText eduroamFileName ''
