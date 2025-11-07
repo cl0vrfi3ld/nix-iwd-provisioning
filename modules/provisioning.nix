@@ -111,7 +111,8 @@ in
               ExecStart = ''
                 /run/current-system/sw/bin/bash -c ' \
                   mkdir -p ${iwdConfigDir} && \
-                  cp ${eduroamProvisioningFile} ${iwdConfigDir}
+                  cp ${eduroamProvisioningFile} ${iwdConfigDir} \
+                '
               '';
 
             };
