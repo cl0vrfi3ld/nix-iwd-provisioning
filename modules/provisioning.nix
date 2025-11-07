@@ -104,8 +104,8 @@ in
           systemd.services.iwd-provisioning_eduroam = {
             description = "Ensure the presence of eduroam provisioning files before iwd starts up";
             # Dependencies: run before iwd, and require it
-            # before = [ "iwd.service" ];
-            # wantedBy = [ "iwd.service" ];
+            before = [ "iwd.service" ];
+            wantedBy = [ "iwd.service" ];
             # the service
             serviceConfig = {
               Type = "oneshot";
