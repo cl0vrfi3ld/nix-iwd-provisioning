@@ -69,6 +69,12 @@ in
 
     mkIf cfg.enable (mkMerge [
       {
+        assertions = [
+          {
+            assertions = networking.wireless.iwd.enable == true;
+            message = "iwd must be enabled before config files can be provisioned";
+          }
+        ];
       }
       (
         let
@@ -99,7 +105,10 @@ in
         in
         mkIf edu.enable {
           assertions = [
-            { assertion = (!builtins.isNull edu.password) || (!builtins.isNull edu.passwordHash); }
+            {
+              assertion = (!builtins.isNull edu.password) || (!builtins.isNull edu.passwordHash);
+              message = "either a password or a password hash must be provided";
+            }
           ];
           systemd.services.iwd-provisioning_eduroam = {
             description = "Ensure the presence of eduroam provisioning files before iwd starts up";
