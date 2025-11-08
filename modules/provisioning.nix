@@ -129,7 +129,7 @@ in
               ExecStart = ''
                 /run/current-system/sw/bin/bash -c ' \
                   mkdir -p ${iwdConfigDir} && \
-                  SECRET = $(cat ${passwordPath}) \
+                  SECRET = $(cat ${edu.passwordPath}) \
                   cat > ${iwdConfigDir}/${eduroamFileName}<< EOF
                   [Security]
                   EAP-Method=PEAP
