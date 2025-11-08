@@ -100,7 +100,7 @@ in
             ) "EAP-PEAP-ServerDomainMask=${edu.serverDomainMask}.${edu.domain}"}
             EAP-PEAP-Phase2-Method=MSCHAPV2
             EAP-PEAP-Phase2-Identity=${edu.username}@${edu.domain}
-            
+
             ${lib.optionalString (!builtins.isNull edu.password) "EAP-PEAP-Phase2-Password=${edu.password}"}
             ${lib.optionalString (
               !builtins.isNull edu.passwordHash
@@ -113,7 +113,10 @@ in
         mkIf edu.enable {
           assertions = [
             {
-              assertion = (!builtins.isNull edu.password) || (!builtins.isNull edu.passwordHash) || (!builtins.isNull edu.passwordPath);
+              assertion =
+                (!builtins.isNull edu.password)
+                || (!builtins.isNull edu.passwordHash)
+                || (!builtins.isNull edu.passwordPath);
               message = "either a password or a password hash must be provided";
             }
           ];
@@ -129,29 +132,33 @@ in
               ExecStart = ''
                 /run/current-system/sw/bin/bash -c ' \
                   mkdir -p ${iwdConfigDir} && \
-                  SECRET = $(cat ${edu.passwordPath}) \
-                  cat > ${iwdConfigDir}/${eduroamFileName}<< EOF
-                  [Security]
-                  EAP-Method=PEAP
+                  echo "[Security]" > ${iwdConfigDir}/${eduroamFileName} && \
+                  echo "EAP-Method=PEAP" >> ${iwdConfigDir}/${eduroamFileName} && \
+                  ${lib.optionalString (edu.phase1Identity != null)
+                    "echo \"EAP-Identity=${edu.phase1Identity}@${edu.domain}\" >> ${iwdConfigDir}/${eduroamFileName} && \\ "
+                  }
                   ${lib.optionalString (
-                    edu.phase1Identity != null
-                  ) "EAP-Identity=${edu.phase1Identity}@${edu.domain}"}
-                  ${lib.optionalString (edu.caCert != null) "EAP-PEAP-CACert=${edu.caCert}"}
+                    edu.caCert != null
+                  ) "echo \"EAP-PEAP-CACert=${edu.caCert}\" >> ${iwdConfigDir}/${eduroamFileName} && \\ "}
+                  ${lib.optionalString (edu.serverDomainMask != null)
+                    "echo \"EAP-PEAP-ServerDomainMask=${edu.serverDomainMask}.${edu.domain}\" >> ${iwdConfigDir}/${eduroamFileName} && \\ "
+                  }
+                  echo "EAP-PEAP-Phase2-Method=MSCHAPV2" >> ${iwdConfigDir}/${eduroamFileName} && \
+                  echo "EAP-PEAP-Phase2-Identity=${edu.username}@${edu.domain}" >> ${iwdConfigDir}/${eduroamFileName} && \
                   ${lib.optionalString (
-                    edu.serverDomainMask != null
-                  ) "EAP-PEAP-ServerDomainMask=${edu.serverDomainMask}.${edu.domain}"}
-                  EAP-PEAP-Phase2-Method=MSCHAPV2
-                  EAP-PEAP-Phase2-Identity=${edu.username}@${edu.domain}
-                  ${lib.optionalString (!builtins.isNull edu.password) "EAP-PEAP-Phase2-Password=${edu.password}"}
-                  ${lib.optionalString (!builtins.isNull edu.passwordPath) "EAP-PEAP-Phase2-Password=$SECRET"}
-                  ${lib.optionalString (
-                    !builtins.isNull edu.passwordHash
-                  ) "EAP-PEAP-Phase2-Password-Hash=${edu.passwordHash}"}
+                    !builtins.isNull edu.password
+                  ) "echo \"EAP-PEAP-Phase2-Password=${edu.password}\" >> ${iwdConfigDir}/${eduroamFileName} && \\ "}
+                  ${lib.optionalString (!builtins.isNull edu.passwordPath)
+                    "echo \"EAP-PEAP-Phase2-Password=$(cat ${edu.passwordPath})\" >> ${iwdConfigDir}/${eduroamFileName} && \\ "
+                  }
+                  ${lib.optionalString (!builtins.isNull edu.passwordHash)
+                    "echo \"EAP-PEAP-Phase2-Password-Hash=${edu.passwordHash}\" >> ${iwdConfigDir}/${eduroamFileName} && \\ "
+                  }
+                  echo "" >> ${iwdConfigDir}/${eduroamFileName} && \
+                  echo "[Settings]" >> ${iwdConfigDir}/${eduroamFileName} && \
+                  echo "Autoconnect=true" >> ${iwdConfigDir}/${eduroamFileName} \
+                 '
 
-                  [Settings]
-                  Autoconnect=true
-                  EOF '
-                
               '';
 
             };
