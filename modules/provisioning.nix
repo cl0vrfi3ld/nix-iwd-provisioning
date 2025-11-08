@@ -150,9 +150,8 @@ in
 
                   [Settings]
                   Autoconnect=true
-                  EOF
-                  
-                '
+                  EOF '
+                
               '';
 
             };
